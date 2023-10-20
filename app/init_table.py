@@ -3,7 +3,13 @@ from psycopg2 import sql
 from fastapi import FastAPI
 from urllib.parse import urlparse
 
-url = urlparse("postgresql://postgres:mysecretpassword@postgres:5432/links")
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+url = os.getenv('POSTGRES_URL', '')
+
+url = urlparse(url)
 db_params = {
     "dbname": url.path[1:],
     "user": url.username,
