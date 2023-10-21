@@ -16,6 +16,12 @@ services:
         - "15672:15672"
         - "5672:5672"
 
+  redis:
+    build: ./redis/
+    restart: always
+    ports:
+      - "6379:6379"
+
   consumer:
     build: ./consumer/
     env_file:
@@ -23,6 +29,7 @@ services:
     depends_on:
       - broker
       - app
+      - redis
     restart: always
 
   app:

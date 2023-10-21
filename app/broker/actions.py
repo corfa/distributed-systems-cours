@@ -13,4 +13,3 @@ def put_in_queue(broker: BlockingChannel, url: str, id_: int):
     }
     message_bytes = json.dumps(message).encode('utf-8')
     broker.basic_publish(exchange='', routing_key=queue_name, body=message_bytes)
-    broker.close()
