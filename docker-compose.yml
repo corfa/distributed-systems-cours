@@ -3,12 +3,53 @@ version: '3.9'
 services:
   postgres:
     build: ./database/
+    env_file:
+      - ./database/.env
+    restart: always
+
+  broker:
+      build: ./rabbitMQ/
+      restart: always
+      env_file:
+      - ./rabbitMQ/.env
+      ports:
+        - "15672:15672"
+        - "5672:5672"
+
+  consumer:
+    build: ./consumer/
+    env_file:
+      - ./consumer/.env
+    depends_on:
+      - broker
+      - app
     restart: always
 
   app:
     build: ./app/
     depends_on:
       - postgres
+      - broker
     restart: always
     ports:
       - 6666:8000
+  
+  app1:
+    build: ./app/
+    depends_on:
+      - postgres
+      - broker
+    restart: always
+    ports:
+      - 6667:8000
+
+  nginx:
+    build: ./nginx/
+    depends_on:
+      - app
+      - app1
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
